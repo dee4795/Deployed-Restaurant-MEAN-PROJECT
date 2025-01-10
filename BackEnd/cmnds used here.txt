@@ -1,0 +1,7 @@
+npm init -y
+npm install express mongoose cors body-parser (body-parser deprecated may be)
+node server.js
+npm install nodemon --save-dev
+npm install dotenv
+npm install jsonwebtoken (Add JWT_SECRET to your .env file of Backend)
+

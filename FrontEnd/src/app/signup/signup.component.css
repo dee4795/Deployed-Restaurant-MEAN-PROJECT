@@ -1,0 +1,87 @@
+.card {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 5%;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 40px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateX(-50%) translateY(-10px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.card h1 {
+  font-family: 'Georgia', serif;
+  font-size: 2em;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.card p {
+  font-family: 'Arial', sans-serif;
+  font-size: 1em;
+  color: #666;
+  line-height: 1.5;
+}
+
+.card button {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 1em;
+  color: #000000;
+  background-color: #ffffff;
+  border: solid 1px #000000;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.card button:hover {
+  background-color: #c9c9c9;
+}
+
+@media (max-width: 768px) {
+  .card {
+    width: 90%;
+    padding: 20px;
+  }
+
+  .card h1 {
+    font-size: 1.5em;
+  }
+
+  .card p {
+    font-size: 0.9em;
+  }
+
+  .card button {
+    padding: 8px 16px;
+    font-size: 0.9em;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    width: 100%;
+    padding: 15px;
+  }
+
+  .card h1 {
+    font-size: 1.2em;
+  }
+
+  .card p {
+    font-size: 0.8em;
+  }
+
+  .card button {
+    padding: 6px 12px;
+    font-size: 0.8em;
+  }
+}

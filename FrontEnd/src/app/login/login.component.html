@@ -1,0 +1,37 @@
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="text-center">
+          <h1>Marvellous Restaurent Login Portal</h1>
+          <h5>You can login here!</h5>
+        </div>
+        <form [formGroup]="loginForm" (ngSubmit)="logIn()">
+          <div class="mb-3">
+            <label class="form-label" for="email">Email address</label>
+            <input formControlName="email" type="email" class="form-control" id="email" placeholder="Email address"
+              autocomplete="email"
+              [ngClass]="{'is-invalid': loginForm.get('email')?.invalid && loginForm.get('email')?.touched}">
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="password">Password</label>
+            <div class="input-group">
+              <input formControlName="password" [type]="showPassword ? 'text' : 'password'" class="form-control"
+                id="password" placeholder="Password" autocomplete="current-password"
+                [ngClass]="{'is-invalid': loginForm.get('password')?.invalid && loginForm.get('password')?.touched}">
+              <button type="button" class="btn btn-outline-secondary" (click)="togglePasswordVisibility()">
+
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+                <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+        <a style="color: blue; margin-top: 10px;" routerLink="/signup">New User? Click to Sign up</a>
+        <div *ngIf="showLoginError" class="popup">Invalid email or password. Please try again.</div>
+      </div>
+    </div>
+  </div>
+</div>

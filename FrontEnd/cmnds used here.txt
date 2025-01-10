@@ -1,0 +1,9 @@
+ng new <project_name> --no-standalone
+ng new service
+npm install bootstrap
+npm install -g vercel 
+vercel   
+vercel --prod
+vercel login 
+npm install 
+

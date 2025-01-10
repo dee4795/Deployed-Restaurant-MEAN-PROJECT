@@ -1,0 +1,53 @@
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="text-center">
+          <h1>Marvellous Restaurent Portal Sign Up</h1>
+          <h5>You can Sign Up here!</h5>
+        </div>
+        <form [formGroup]="signupForm" (ngSubmit)="signUp()">
+          <div class="mb-3">
+            <label class="form-label" for="email">Email address</label>
+            <input formControlName="email" type="email" class="form-control" id="email" placeholder="Email address"
+              autocomplete="email"
+              [ngClass]="{'is-invalid': signupForm.get('email')?.invalid && signupForm.get('email')?.touched}">
+            <div *ngIf="showEmailPopup" class="popup">Invalid email address.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="name">Name</label>
+            <input formControlName="name" type="text" class="form-control" id="name" placeholder="Name"
+              autocomplete="name"
+              [ngClass]="{'is-invalid': signupForm.get('name')?.invalid && signupForm.get('name')?.touched}">
+            <div *ngIf="showNamePopup" class="popup">Name is required.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="mobile">Phone Number</label>
+            <input formControlName="mobile" type="number" class="form-control" id="mobile" placeholder="Phone"
+              autocomplete="tel"
+              [ngClass]="{'is-invalid': signupForm.get('mobile')?.invalid && signupForm.get('mobile')?.touched}">
+            <div *ngIf="showMobilePopup" class="popup">Invalid mobile number. Please enter a 10-digit number.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="password">Password</label>
+            <div class="input-group">
+              <input formControlName="password" [type]="showPassword ? 'text' : 'password'" class="form-control"
+                id="password" autocomplete="new-password" placeholder="Password"
+                [ngClass]="{'is-invalid': signupForm.get('password')?.invalid && signupForm.get('password')?.touched}">
+              <button type="button" class="btn btn-outline-secondary" (click)="togglePasswordVisibility()">
+
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+                <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                
+              </button>
+            </div>
+            <div *ngIf="showPasswordPopup" class="popup">Password must be at least 8 characters long and contain a mix
+              of upper and lower case letters, numbers, and special characters.</div>
+          </div>
+          <button type="submit" class="btn btn-primary">Sign up</button>
+        </form>
+        <a style="color: blue; margin-top: 10px;" routerLink="/login">Already User? Click to Login</a>
+      </div>
+    </div>
+  </div>
+</div>

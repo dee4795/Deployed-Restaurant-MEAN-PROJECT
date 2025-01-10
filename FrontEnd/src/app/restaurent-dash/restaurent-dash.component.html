@@ -1,0 +1,125 @@
+<!-- restaurent-dash.component.html -->
+<nav class="navbar navbar-light">
+  <div class="container-fluid">
+    <h2>Marvellous Restaurant Record App</h2>
+    <div class="d-flex">
+      <button (click)="clickAddResto()" class="btn custom-btn" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Restaurant</button>
+      <button routerLink="/login" style="margin-left: 5px;" class="btn custom-btn" type="button">Log Out</button>
+    </div>
+  </div>
+</nav>
+
+<table class="table mt-4">
+  <thead>
+    <tr>
+      <th scope="col">Restaurant Id</th>
+      <th scope="col">Restaurant Name</th>
+      <th scope="col">Restaurant Email</th>
+      <th scope="col">Restaurant Address</th>
+      <th scope="col">Restaurant Phone</th>
+      <th scope="col">Restaurant Services</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let data of allRestaurentData">
+      <td>{{data._id}}</td>
+      <td>{{data.name}}</td>
+      <td>{{data.email}}</td>
+      <td>{{data.address}}</td>
+      <td>{{data.mobile}}</td>
+      <td>{{data.services}}</td>
+      <td>
+        <button (click)="onEditResto(data)" class="btn custom-btn" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit</button> &nbsp;
+        <button (click)="deleteResto(data._id)" class="btn custom-btn">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Restaurant Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="formValue">
+          <div class="mb-3">
+            <label class="form-label" for="restaurentName">Name</label>
+            <input type="text" 
+                   class="form-control" 
+                   formControlName="name" 
+                   placeholder="Restaurant Name" 
+                   id="restaurentName"
+                   [ngClass]="{'is-invalid': formValue.get('name')?.invalid && formValue.get('name')?.touched}"/>
+            <div class="invalid-feedback" *ngIf="formValue.get('name')?.invalid && formValue.get('name')?.touched">
+              Name is required and must be at least 2 characters long
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="restaurentEmail">Email</label>
+            <input type="email" 
+                   class="form-control" 
+                   formControlName="email" 
+                   placeholder="restaurant@example.com" 
+                   id="restaurentEmail"
+                   [ngClass]="{'is-invalid': formValue.get('email')?.invalid && formValue.get('email')?.touched}"/>
+            <div class="invalid-feedback" *ngIf="formValue.get('email')?.invalid && formValue.get('email')?.touched">
+              Please enter a valid email address
+            </div>
+            <div *ngIf="showEmailPopup" class="popup">Invalid email address. Please enter a valid email.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="restaurentAddress">Address</label>
+            <input type="text" 
+                   class="form-control" 
+                   formControlName="address" 
+                   placeholder="123 Restaurant St, City, State" 
+                   id="restaurentAddress"
+                   [ngClass]="{'is-invalid': formValue.get('address')?.invalid && formValue.get('address')?.touched}"/>
+            <div class="invalid-feedback" *ngIf="formValue.get('address')?.invalid && formValue.get('address')?.touched">
+              Address is required and must be at least 5 characters long
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="restaurentMobile">Mobile</label>
+            <input type="number" 
+                   class="form-control" 
+                   formControlName="mobile" 
+                   placeholder="10-digit mobile number" 
+                   id="restaurentMobile"
+                   [ngClass]="{'is-invalid': formValue.get('mobile')?.invalid && formValue.get('mobile')?.touched}"/>
+            <div class="invalid-feedback" *ngIf="formValue.get('mobile')?.invalid && formValue.get('mobile')?.touched">
+              Please enter a valid 10-digit mobile number
+            </div>
+            <div *ngIf="showPopup" class="popup">Invalid mobile number. Please enter a valid 10-digit number.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="restaurentServices">Services</label>
+            <input type="text" 
+                   class="form-control" 
+                   formControlName="services" 
+                   placeholder="e.g., Dine-in, Takeaway, Delivery" 
+                   id="restaurentServices"
+                   [ngClass]="{'is-invalid': formValue.get('services')?.invalid && formValue.get('services')?.touched}"/>
+            <div class="invalid-feedback" *ngIf="formValue.get('services')?.invalid && formValue.get('services')?.touched">
+              Services are required
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="closeModal">Close</button>
+        <button *ngIf="showAdd" type="button" class="btn custom-btn" (click)="addRestaurent()">Submit</button>
+        <button *ngIf="showBtn" type="button" class="btn custom-btn" (click)="updateResto()">Update</button>
+      </div>
+    </div>
+  </div>
+</div>
