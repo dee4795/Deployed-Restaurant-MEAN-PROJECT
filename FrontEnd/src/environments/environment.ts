@@ -5,7 +5,7 @@
 // src/environments/environment.ts
 export const environment = {
   production: false,
-  apiUrl: 'https://testtwoback.onrender.com/api'
+  apiUrl: 'https://backend-rose-eight-37.vercel.app/api'
 };
 
 /*
