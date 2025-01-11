@@ -156,6 +156,21 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+app.post('/api/logout', verifyToken, async (req, res) => {
+    try {
+        // You might want to add the token to a blacklist in Redis or similar
+        // This is optional but recommended for production
+        /*
+        const token = req.headers.authorization.split(' ')[1];
+        await blacklistToken(token); // You would need to implement this
+        */
+        
+        res.json({ message: 'Logged out successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 // Serve frontend in production
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, '../frontend/dist')));

@@ -4,6 +4,7 @@ import { ApiService } from '../shared/api.service';
 import { RestaurentData } from './restaurent.model';
 import  {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
 import { COUNTRY_LIST, Country } from '../shared/interfaces/country.interface';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-restaurent-dash',
@@ -36,7 +37,14 @@ export class RestaurentDashComponent implements OnInit {
   isDeleteLoading: Record<string, boolean> = {};
   isTableLoading: boolean = true;
 
-  constructor(private formbuilder: FormBuilder, private api: ApiService) { }
+  constructor(
+    private formbuilder: FormBuilder, 
+    private api: ApiService, 
+    private authService:AuthService) { }
+
+    onLogout() {
+      this.authService.logout();
+    }
 
   ngOnInit(): void {
     this.formValue = this.formbuilder.group({

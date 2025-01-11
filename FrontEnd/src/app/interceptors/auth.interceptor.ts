@@ -20,8 +20,12 @@ export class AuthInterceptor implements HttpInterceptor {
   ) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+    // Skip adding token for login and logout requests
+    if (request.url.includes('/login') || request.url.includes('/logout')) {
+      return next.handle(request);
+    }
+  
     const token = localStorage.getItem('token');
-
     if (token) {
       request = request.clone({
         setHeaders: {
@@ -29,15 +33,17 @@ export class AuthInterceptor implements HttpInterceptor {
         }
       });
     }
-
+  
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
-        if (error.status === 401) {
-          this.authService.logout();
-          this.router.navigate(['/login']);
+        if ([401, 403].includes(error.status)) {
+          // Don't trigger logout if we're already on the login page
+          if (!this.router.url.includes('/login')) {
+            this.authService.logout();
+          }
         }
         return throwError(() => error);
       })
     );
-  }
+  } 
 }

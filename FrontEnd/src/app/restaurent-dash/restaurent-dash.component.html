@@ -27,10 +27,6 @@
         </div>
       </form>
 
-
-
-
-
       <button (click)="clickAddResto()" 
               class="btn custom-btn" 
               type="button" 
@@ -41,10 +37,11 @@
           Add Restaurant
         </div>
       </button>
-      <button routerLink="/login" 
-              class="btn custom-btn ms-2" 
-              type="button">
-        Log Out
+
+      <button (click)="onLogout()" 
+        class="btn custom-btn ms-2" 
+        type="button">
+         Log Out
       </button>
     </div>
   </div>
