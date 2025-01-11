@@ -17,9 +17,14 @@ export class SignupComponent implements OnInit {
   showMobilePopup: boolean = false;
   showPasswordPopup: boolean = false;
   showPassword: boolean = false;
-  private baseUrl = environment.apiUrl; // Updated API endpoint
+  isLoading: boolean = false;
+  private baseUrl = environment.apiUrl;
 
-  constructor(private formbuilder: FormBuilder, private _http: HttpClient, private _router: Router) {}
+  constructor(
+    private formbuilder: FormBuilder, 
+    private _http: HttpClient, 
+    private _router: Router
+  ) {}
 
   ngOnInit(): void {
     this.signupForm = this.formbuilder.group({
@@ -62,15 +67,18 @@ export class SignupComponent implements OnInit {
       return;
     }
 
-    // Updated to use new API endpoint with error handling
+    this.isLoading = true;
+
     this._http.post<any>(`${this.baseUrl}/signup`, this.signupForm.value).subscribe({
       next: (response) => {
+        this.isLoading = false;
         console.log('Signup successful:', response);
         alert('Signup Successfully');
         this.signupForm.reset();
         this._router.navigate(['/login']);
       },
       error: (error: HttpErrorResponse) => {
+        this.isLoading = false;
         console.error('Signup error:', error);
         
         if (error.status === 400) {

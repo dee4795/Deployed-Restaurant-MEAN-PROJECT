@@ -1,4 +1,3 @@
-// restaurent-dash.component.ts
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ApiService } from '../shared/api.service';
@@ -18,7 +17,13 @@ export class RestaurentDashComponent implements OnInit {
   showBtn: boolean = false;
   showPopup: boolean = false;
   showEmailPopup: boolean = false;
-  currentRestaurantId: string = ''; // Add this to store the current restaurant ID
+  currentRestaurantId: string = '';
+  
+  // Loading states for different actions
+  isAddLoading: boolean = false;
+  isUpdateLoading: boolean = false;
+  isDeleteLoading: Record<string, boolean> = {};
+  isTableLoading: boolean = true;
 
   constructor(private formbuilder: FormBuilder, private api: ApiService) { }
 
@@ -37,7 +42,7 @@ export class RestaurentDashComponent implements OnInit {
     this.formValue.reset();
     this.showAdd = true;
     this.showBtn = false;
-    this.currentRestaurantId = ''; // Reset the ID when adding new restaurant
+    this.currentRestaurantId = '';
   }
 
   addRestaurent() {
@@ -55,6 +60,8 @@ export class RestaurentDashComponent implements OnInit {
       return;
     }
 
+    this.isAddLoading = true;
+
     const restaurantData: RestaurentData = {
       name: this.formValue.value.name,
       email: this.formValue.value.email,
@@ -63,8 +70,6 @@ export class RestaurentDashComponent implements OnInit {
       services: this.formValue.value.services
     };
 
-    console.log('Sending data to server:', restaurantData);
-
     this.api.postRestaurent(restaurantData).subscribe({
       next: (res) => {
         console.log('Restaurant added successfully:', res);
@@ -72,22 +77,27 @@ export class RestaurentDashComponent implements OnInit {
         this.formValue.reset();
         document.getElementById('closeModal')?.click();
         this.getAllData();
+        this.isAddLoading = false;
       },
       error: (err) => {
         console.error('Error adding restaurant:', err);
         alert("Failed to add restaurant: " + err.message);
+        this.isAddLoading = false;
       }
     });
   }
 
   getAllData() {
+    this.isTableLoading = true;
     this.api.getRestaurent().subscribe({
       next: (res) => {
         this.allRestaurentData = res;
+        this.isTableLoading = false;
       },
       error: (err) => {
         console.error('Error fetching restaurants:', err);
         alert("Failed to fetch restaurants");
+        this.isTableLoading = false;
       }
     });
   }
@@ -99,14 +109,18 @@ export class RestaurentDashComponent implements OnInit {
     }
 
     if (confirm('Are you sure you want to delete this restaurant?')) {
+      this.isDeleteLoading[id] = true;
+
       this.api.deleteRestaurant(id).subscribe({
         next: (res) => {
           alert("Restaurant Deleted Successfully");
           this.getAllData();
+          this.isDeleteLoading[id] = false;
         },
         error: (err) => {
           console.error('Error deleting restaurant:', err);
           alert("Failed to delete restaurant");
+          this.isDeleteLoading[id] = false;
         }
       });
     }
@@ -120,7 +134,7 @@ export class RestaurentDashComponent implements OnInit {
 
     this.showAdd = false;
     this.showBtn = true;
-    this.currentRestaurantId = data._id; // Store the ID separately
+    this.currentRestaurantId = data._id;
     
     this.formValue.patchValue({
       name: data.name,
@@ -152,8 +166,10 @@ export class RestaurentDashComponent implements OnInit {
       return;
     }
 
+    this.isUpdateLoading = true;
+
     const updatedData: RestaurentData = {
-      _id: this.currentRestaurantId, // Use the stored ID
+      _id: this.currentRestaurantId,
       name: this.formValue.value.name,
       email: this.formValue.value.email,
       mobile: Number(this.formValue.value.mobile),
@@ -165,13 +181,15 @@ export class RestaurentDashComponent implements OnInit {
       next: (res) => {
         alert("Restaurant Updated Successfully");
         this.formValue.reset();
-        this.currentRestaurantId = ''; // Reset the ID after update
+        this.currentRestaurantId = '';
         document.getElementById('closeModal')?.click();
         this.getAllData();
+        this.isUpdateLoading = false;
       },
       error: (err) => {
         console.error('Error updating restaurant:', err);
         alert("Failed to update restaurant: " + err.message);
+        this.isUpdateLoading = false;
       }
     });
   }

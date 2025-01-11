@@ -1,41 +1,76 @@
-<!-- restaurent-dash.component.html -->
 <nav class="navbar navbar-light">
   <div class="container-fluid">
-    <h2>Marvellous Restaurant Record App</h2>
+    <h2 class="navbar-title">Marvellous Restaurant Record App</h2>
     <div class="d-flex">
-      <button (click)="clickAddResto()" class="btn custom-btn" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Restaurant</button>
-      <button routerLink="/login" style="margin-left: 5px;" class="btn custom-btn" type="button">Log Out</button>
+      <button (click)="clickAddResto()" 
+              class="btn custom-btn" 
+              type="button" 
+              data-bs-toggle="modal" 
+              data-bs-target="#exampleModal">
+        <div class="btn-content">
+          <div *ngIf="isAddLoading" class="spinner"></div>
+          Add Restaurant
+        </div>
+      </button>
+      <button routerLink="/login" 
+              class="btn custom-btn ms-2" 
+              type="button">
+        Log Out
+      </button>
     </div>
   </div>
 </nav>
 
-<table class="table mt-4">
-  <thead>
-    <tr>
-      <th scope="col">Restaurant Id</th>
-      <th scope="col">Restaurant Name</th>
-      <th scope="col">Restaurant Email</th>
-      <th scope="col">Restaurant Address</th>
-      <th scope="col">Restaurant Phone</th>
-      <th scope="col">Restaurant Services</th>
-      <th scope="col">Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let data of allRestaurentData">
-      <td>{{data._id}}</td>
-      <td>{{data.name}}</td>
-      <td>{{data.email}}</td>
-      <td>{{data.address}}</td>
-      <td>{{data.mobile}}</td>
-      <td>{{data.services}}</td>
-      <td>
-        <button (click)="onEditResto(data)" class="btn custom-btn" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit</button> &nbsp;
-        <button (click)="deleteResto(data._id)" class="btn custom-btn">Delete</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+<div class="table-responsive">
+  <div *ngIf="isTableLoading" class="text-center my-4">
+    <div class="spinner"></div>
+    <p>Loading restaurants...</p>
+  </div>
+
+  <table class="table mt-4" *ngIf="!isTableLoading">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Name</th>
+        <th scope="col">Email</th>
+        <th scope="col">Address</th>
+        <th scope="col">Phone</th>
+        <th scope="col">Services</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of allRestaurentData">
+        <td data-label="ID">{{data._id}}</td>
+        <td data-label="Name">{{data.name}}</td>
+        <td data-label="Email">{{data.email}}</td>
+        <td data-label="Address">{{data.address}}</td>
+        <td data-label="Phone">{{data.mobile}}</td>
+        <td data-label="Services">{{data.services}}</td>
+        <td data-label="Action" class="action-buttons">
+          <button (click)="onEditResto(data)" 
+                  class="btn custom-btn mb-2 mb-md-0" 
+                  type="button" 
+                  data-bs-toggle="modal" 
+                  data-bs-target="#exampleModal">
+            <div class="btn-content">
+              <div *ngIf="isUpdateLoading && currentRestaurantId === data._id" class="spinner"></div>
+              Edit
+            </div>
+          </button>
+          <button (click)="deleteResto(data._id)" 
+                  class="btn custom-btn ms-md-2"
+                  [disabled]="isDeleteLoading[data._id]">
+            <div class="btn-content">
+              <div *ngIf="isDeleteLoading[data._id]" class="spinner"></div>
+              {{ isDeleteLoading[data._id] ? 'Deleting...' : 'Delete' }}
+            </div>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -55,7 +90,7 @@
                    placeholder="Restaurant Name" 
                    id="restaurentName"
                    [ngClass]="{'is-invalid': formValue.get('name')?.invalid && formValue.get('name')?.touched}"/>
-            <div class="invalid-feedback" *ngIf="formValue.get('name')?.invalid && formValue.get('name')?.touched">
+            <div class="invalid-feedback">
               Name is required and must be at least 2 characters long
             </div>
           </div>
@@ -68,10 +103,9 @@
                    placeholder="restaurant@example.com" 
                    id="restaurentEmail"
                    [ngClass]="{'is-invalid': formValue.get('email')?.invalid && formValue.get('email')?.touched}"/>
-            <div class="invalid-feedback" *ngIf="formValue.get('email')?.invalid && formValue.get('email')?.touched">
+            <div class="invalid-feedback">
               Please enter a valid email address
             </div>
-            <div *ngIf="showEmailPopup" class="popup">Invalid email address. Please enter a valid email.</div>
           </div>
 
           <div class="mb-3">
@@ -79,10 +113,10 @@
             <input type="text" 
                    class="form-control" 
                    formControlName="address" 
-                   placeholder="123 Restaurant St, City, State" 
+                   placeholder="123 Restaurant St, City" 
                    id="restaurentAddress"
                    [ngClass]="{'is-invalid': formValue.get('address')?.invalid && formValue.get('address')?.touched}"/>
-            <div class="invalid-feedback" *ngIf="formValue.get('address')?.invalid && formValue.get('address')?.touched">
+            <div class="invalid-feedback">
               Address is required and must be at least 5 characters long
             </div>
           </div>
@@ -95,10 +129,9 @@
                    placeholder="10-digit mobile number" 
                    id="restaurentMobile"
                    [ngClass]="{'is-invalid': formValue.get('mobile')?.invalid && formValue.get('mobile')?.touched}"/>
-            <div class="invalid-feedback" *ngIf="formValue.get('mobile')?.invalid && formValue.get('mobile')?.touched">
+            <div class="invalid-feedback">
               Please enter a valid 10-digit mobile number
             </div>
-            <div *ngIf="showPopup" class="popup">Invalid mobile number. Please enter a valid 10-digit number.</div>
           </div>
 
           <div class="mb-3">
@@ -106,10 +139,10 @@
             <input type="text" 
                    class="form-control" 
                    formControlName="services" 
-                   placeholder="e.g., Dine-in, Takeaway, Delivery" 
+                   placeholder="e.g., Dine-in, Takeaway" 
                    id="restaurentServices"
                    [ngClass]="{'is-invalid': formValue.get('services')?.invalid && formValue.get('services')?.touched}"/>
-            <div class="invalid-feedback" *ngIf="formValue.get('services')?.invalid && formValue.get('services')?.touched">
+            <div class="invalid-feedback">
               Services are required
             </div>
           </div>
@@ -117,8 +150,26 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="closeModal">Close</button>
-        <button *ngIf="showAdd" type="button" class="btn custom-btn" (click)="addRestaurent()">Submit</button>
-        <button *ngIf="showBtn" type="button" class="btn custom-btn" (click)="updateResto()">Update</button>
+        <button *ngIf="showAdd" 
+                type="button" 
+                class="btn custom-btn" 
+                (click)="addRestaurent()"
+                [disabled]="isAddLoading">
+          <div class="btn-content">
+            <div *ngIf="isAddLoading" class="spinner"></div>
+            {{ isAddLoading ? 'Adding...' : 'Add Restaurant' }}
+          </div>
+        </button>
+        <button *ngIf="showBtn" 
+                type="button" 
+                class="btn custom-btn" 
+                (click)="updateResto()"
+                [disabled]="isUpdateLoading">
+          <div class="btn-content">
+            <div *ngIf="isUpdateLoading" class="spinner"></div>
+            {{ isUpdateLoading ? 'Updating...' : 'Update' }}
+          </div>
+        </button>
       </div>
     </div>
   </div>

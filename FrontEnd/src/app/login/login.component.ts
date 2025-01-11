@@ -2,7 +2,7 @@ import { environment } from './../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router,ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -16,7 +16,8 @@ export class LoginComponent implements OnInit {
   showLoginError: boolean = false;
   showPassword: boolean = false;
   returnUrl: string = '/restaurent';
-  private baseUrl = environment.apiUrl; // Updated API endpoint
+  isLoading: boolean = false;
+  private baseUrl = environment.apiUrl;
 
   constructor(
     private formbuilder: FormBuilder,
@@ -33,7 +34,6 @@ export class LoginComponent implements OnInit {
     });
 
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/restaurent';
-  
   }
 
   togglePasswordVisibility() {
@@ -47,11 +47,15 @@ export class LoginComponent implements OnInit {
       return;
     }
 
+    this.isLoading = true;
+
     this.authService.login(this.loginForm.value).subscribe({
       next: () => {
+        this.isLoading = false;
         this.router.navigate([this.returnUrl]);
       },
       error: (error) => {
+        this.isLoading = false;
         console.error('Login error:', error);
         this.showLoginError = true;
         setTimeout(() => this.showLoginError = false, 3000);
