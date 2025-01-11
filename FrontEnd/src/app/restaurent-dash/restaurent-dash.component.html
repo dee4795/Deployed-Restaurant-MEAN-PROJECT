@@ -1,7 +1,36 @@
 <nav class="navbar navbar-light">
   <div class="container-fluid">
     <h2 class="navbar-title">Marvellous Restaurant Record App</h2>
-    <div class="d-flex">
+    <div class="d-flex align-items-center">
+      <!-- Search box -->
+      <form [formGroup]="searchForm" class="search-container me-2">
+        <div class="input-group">
+          <input type="text"
+                 class="form-control search-input"
+                 placeholder="Search restaurants..."
+                 formControlName="searchTerm">
+          <button class="btn custom-btn" 
+                  type="button"
+                  (click)="clearSearch()"
+                  *ngIf="searchForm.get('searchTerm')?.value">
+            Clear
+          </button>
+        </div>
+        
+        <!-- Predictions dropdown -->
+        <div class="predictions-container" *ngIf="showPredictions && filteredRestaurants.length > 0">
+          <div class="prediction-item" 
+               *ngFor="let restaurant of filteredRestaurants"
+               (click)="selectPrediction(restaurant)">
+            {{restaurant.name}}
+          </div>
+        </div>
+      </form>
+
+
+
+
+
       <button (click)="clickAddResto()" 
               class="btn custom-btn" 
               type="button" 
@@ -20,6 +49,7 @@
     </div>
   </div>
 </nav>
+
 
 <div class="table-responsive">
   <div *ngIf="isTableLoading" class="text-center my-4">
@@ -122,15 +152,51 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label" for="restaurentMobile">Mobile</label>
-            <input type="number" 
-                   class="form-control" 
-                   formControlName="mobile" 
-                   placeholder="10-digit mobile number" 
-                   id="restaurentMobile"
-                   [ngClass]="{'is-invalid': formValue.get('mobile')?.invalid && formValue.get('mobile')?.touched}"/>
-            <div class="invalid-feedback">
-              Please enter a valid 10-digit mobile number
+            <label class="form-label">Mobile Number</label>
+            <div class="d-flex">
+              <div class="country-code-container me-2">
+                <div class="input-group">
+                  <input type="text"
+                         [value]="formValue.get('countryCode')?.value"
+                         class="form-control country-code-input"
+                         (click)="showCountryDropdown = true"
+                         (input)="searchCountries($event)"
+                         placeholder="Search country code..."
+                         readonly>
+                  <span class="input-group-text dropdown-toggle" 
+                        (click)="showCountryDropdown = !showCountryDropdown">
+                  </span>
+                </div>
+                
+                <div class="country-dropdown" *ngIf="showCountryDropdown">
+                  <input type="text" 
+                         class="form-control mb-2" 
+                         placeholder="Search countries..."
+                         (input)="searchCountries($event)"
+                         [value]="countrySearchTerm">
+                  <div class="country-list">
+                    <div class="country-item" 
+                         *ngFor="let country of filteredCountries"
+                         (click)="selectCountry(country)">
+                      <span class="country-name">{{country.name}}</span>
+                      <span class="country-dial-code">{{country.dialCode}}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          
+              <div class="flex-grow-1">
+                <input type="number" 
+                       class="form-control" 
+                       formControlName="mobile" 
+                       placeholder="Mobile number" 
+                       id="restaurentMobile"
+                       (input)="onMobileInput($event)"
+                       [ngClass]="{'is-invalid': formValue.get('mobile')?.invalid && formValue.get('mobile')?.touched}"/>
+                <div class="invalid-feedback">
+                  Please enter a valid 10-digit mobile number
+                </div>
+              </div>
             </div>
           </div>
 

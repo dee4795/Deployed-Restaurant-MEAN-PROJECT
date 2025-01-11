@@ -6,7 +6,6 @@ const path = require('path');
 const jwt = require('jsonwebtoken');
 const Restaurant = require('./models/restaurant.model');
 const User = require('./models/user.model');
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'; // Better to use environment variable

@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ApiService } from '../shared/api.service';
 import { RestaurentData } from './restaurent.model';
+import  {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
+import { COUNTRY_LIST, Country } from '../shared/interfaces/country.interface';
 
 @Component({
   selector: 'app-restaurent-dash',
@@ -18,6 +20,15 @@ export class RestaurentDashComponent implements OnInit {
   showPopup: boolean = false;
   showEmailPopup: boolean = false;
   currentRestaurantId: string = '';
+
+  searchForm!: FormGroup;
+  filteredRestaurants: any[] = [];
+  showPredictions: boolean = false;
+
+  countries: Country[] = COUNTRY_LIST;
+  filteredCountries: Country[] = [];
+  showCountryDropdown: boolean = false;
+  countrySearchTerm: string = '';
   
   // Loading states for different actions
   isAddLoading: boolean = false;
@@ -31,19 +42,94 @@ export class RestaurentDashComponent implements OnInit {
     this.formValue = this.formbuilder.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
+      countryCode: ['+1', Validators.required],
       mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       address: ['', [Validators.required, Validators.minLength(5)]],
       services: ['', Validators.required],
     });
+
+    this.searchForm = this.formbuilder.group({
+      searchTerm: ['']
+    });
+
+    // Subscribe to search input changes
+    this.searchForm.get('searchTerm')?.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged()
+      )
+      .subscribe(term => {
+        this.searchRestaurants(term);
+      });
+
+
+
     this.getAllData();
   }
 
+  searchRestaurants(term: string) {
+    if (!term?.trim()) {
+      this.filteredRestaurants = [];
+      this.showPredictions = false;
+      this.getAllData();
+      return;
+    }
+
+    const searchTerm = term.toLowerCase();
+    this.filteredRestaurants = this.allRestaurentData.filter((restaurant: any) =>
+      restaurant.name.toLowerCase().includes(searchTerm)
+    );
+    this.showPredictions = true;
+  }
+
+  selectPrediction(restaurant: any) {
+    this.searchForm.patchValue({ searchTerm: restaurant.name });
+    this.showPredictions = false;
+    this.allRestaurentData = [restaurant];
+  }
+
+  clearSearch() {
+    this.searchForm.reset();
+    this.showPredictions = false;
+    this.getAllData();
+  }
+
+  onMobileInput(event: any) {
+    let input = event.target;
+    if (input.value.length > 10) {
+      input.value = input.value.slice(0, 10);
+      this.formValue.patchValue({ mobile: input.value });
+    }
+  }
+  
   clickAddResto() {
     this.formValue.reset();
     this.showAdd = true;
     this.showBtn = false;
     this.currentRestaurantId = '';
   }
+
+
+  searchCountries(event: Event): void {
+    const searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
+    this.countrySearchTerm = searchTerm;
+    
+    if (!searchTerm) {
+      this.filteredCountries = this.countries;
+    } else {
+      this.filteredCountries = this.countries.filter(country => 
+        country.name.toLowerCase().includes(searchTerm) || 
+        country.dialCode.includes(searchTerm)
+      );
+    }
+  }
+
+  selectCountry(country: Country): void {
+    this.formValue.patchValue({ countryCode: country.dialCode });
+    this.showCountryDropdown = false;
+    this.countrySearchTerm = '';
+  }
+
 
   addRestaurent() {
     if (this.formValue.invalid) {
@@ -65,6 +151,7 @@ export class RestaurentDashComponent implements OnInit {
     const restaurantData: RestaurentData = {
       name: this.formValue.value.name,
       email: this.formValue.value.email,
+      countryCode: this.formValue.value.countryCode,
       mobile: Number(this.formValue.value.mobile),
       address: this.formValue.value.address,
       services: this.formValue.value.services
@@ -139,6 +226,7 @@ export class RestaurentDashComponent implements OnInit {
     this.formValue.patchValue({
       name: data.name,
       email: data.email,
+      countryCode: data.countryCode,
       mobile: data.mobile,
       address: data.address,
       services: data.services
@@ -172,6 +260,7 @@ export class RestaurentDashComponent implements OnInit {
       _id: this.currentRestaurantId,
       name: this.formValue.value.name,
       email: this.formValue.value.email,
+      countryCode: this.formValue.value.countryCode,
       mobile: Number(this.formValue.value.mobile),
       address: this.formValue.value.address,
       services: this.formValue.value.services

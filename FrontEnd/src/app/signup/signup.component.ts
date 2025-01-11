@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { COUNTRY_LIST,Country } from '../shared/interfaces/country.interface';
 
 @Component({
   selector: 'app-signup',
@@ -20,6 +21,11 @@ export class SignupComponent implements OnInit {
   isLoading: boolean = false;
   private baseUrl = environment.apiUrl;
 
+  countries: Country[] = COUNTRY_LIST;
+  filteredCountries: Country[] = [];
+  showCountryDropdown: boolean = false;
+  countrySearchTerm: string = '';
+
   constructor(
     private formbuilder: FormBuilder, 
     private _http: HttpClient, 
@@ -30,13 +36,42 @@ export class SignupComponent implements OnInit {
     this.signupForm = this.formbuilder.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
+      countryCode: ['+1', Validators.required],
       mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       password: ['', [Validators.required, Validators.pattern('^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[/ @#$%^&+=]).{8,}$')]],
     });
   }
 
+  searchCountries(event: Event): void {
+    const searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
+    this.countrySearchTerm = searchTerm;
+    
+    if (!searchTerm) {
+      this.filteredCountries = this.countries;
+    } else {
+      this.filteredCountries = this.countries.filter(country => 
+        country.name.toLowerCase().includes(searchTerm) || 
+        country.dialCode.includes(searchTerm)
+      );
+    }
+  }
+
+  selectCountry(country: Country): void {
+    this.signupForm.patchValue({ countryCode: country.dialCode });
+    this.showCountryDropdown = false;
+    this.countrySearchTerm = '';
+  }
+
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
+  }
+
+  onMobileInput(event: any) {
+    let input = event.target;
+    if (input.value.length > 10) {
+      input.value = input.value.slice(0, 10);
+      this.signupForm.patchValue({ mobile: input.value });
+    }
   }
 
   signUp() {

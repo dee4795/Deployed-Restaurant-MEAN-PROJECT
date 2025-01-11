@@ -140,6 +140,128 @@
 }
 
 
+.search-container {
+  position: relative;
+  width: 250px; /* Fixed width for search box */
+}
+
+.search-input {
+  height: 38px; /* Match height with buttons */
+}
+
+.predictions-container {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 1000;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.prediction-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.prediction-item:hover {
+  background-color: #f5f5f5;
+}
+
+
+.container.mt-4 {
+  display: none;
+}
+
+/* Prevent number input arrows */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -webkit-appearance: textfield; /* Safari/Chrome */
+  -moz-appearance: textfield;    /* Firefox */
+  appearance: textfield;         /* Standard property */
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+
+
+
+.country-code-container {
+  position: relative;
+  width: 140px;
+}
+
+.country-code-input {
+  cursor: pointer;
+  background-color: #fff;
+}
+
+.country-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 250px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 1000;
+  padding: 10px;
+}
+
+.country-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.country-item {
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.country-item:hover {
+  background-color: #f5f5f5;
+}
+
+.country-name {
+  font-size: 14px;
+}
+
+.country-dial-code {
+  color: #666;
+}
+
+/* Remove number input spinners */
+input[type="number"] {
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
 
 @media (max-width: 768px) {
   .card {

@@ -29,17 +29,53 @@
                    [ngClass]="{'is-invalid': signupForm.get('name')?.invalid && signupForm.get('name')?.touched}">
             <div *ngIf="showNamePopup" class="popup">Name is required.</div>
           </div>
+
           <div class="mb-3">
-            <label class="form-label" for="mobile">Phone Number</label>
-            <input formControlName="mobile" 
-                   type="number" 
-                   class="form-control" 
-                   id="mobile" 
-                   placeholder="Phone"
-                   autocomplete="tel"
-                   [ngClass]="{'is-invalid': signupForm.get('mobile')?.invalid && signupForm.get('mobile')?.touched}">
-            <div *ngIf="showMobilePopup" class="popup">Invalid mobile number. Please enter a 10-digit number.</div>
+            <label class="form-label">Mobile Number</label>
+            <div class="d-flex">
+              <div class="country-code-container me-2">
+                <div class="input-group">
+                  <input type="text"
+                         [value]="signupForm.get('countryCode')?.value"
+                         class="form-control country-code-input"
+                         (click)="showCountryDropdown = true"
+                         (input)="searchCountries($event)"
+                         placeholder="Search country code..."
+                         readonly>
+                  <span class="input-group-text dropdown-toggle" 
+                        (click)="showCountryDropdown = !showCountryDropdown">
+                  </span>
+                </div>
+                
+                <div class="country-dropdown" *ngIf="showCountryDropdown">
+                  <input type="text" 
+                         class="form-control mb-2" 
+                         placeholder="Search countries..."
+                         (input)="searchCountries($event)"
+                         [value]="countrySearchTerm">
+                  <div class="country-list">
+                    <div class="country-item" 
+                         *ngFor="let country of filteredCountries"
+                         (click)="selectCountry(country)">
+                      <span class="country-name">{{country.name}}</span>
+                      <span class="country-dial-code">{{country.dialCode}}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          
+              <div class="flex-grow-1">
+                <input formControlName="mobile" 
+                       type="number" 
+                       class="form-control" 
+                       placeholder="Mobile number"
+                       (input)="onMobileInput($event)"
+                       [ngClass]="{'is-invalid': signupForm.get('mobile')?.invalid && signupForm.get('mobile')?.touched}">
+                <div *ngIf="showMobilePopup" class="popup">Invalid mobile number. Please enter a 10-digit number.</div>
+              </div>
+            </div>
           </div>
+
           <div class="mb-3">
             <label class="form-label" for="password">Password</label>
             <div class="input-group">
