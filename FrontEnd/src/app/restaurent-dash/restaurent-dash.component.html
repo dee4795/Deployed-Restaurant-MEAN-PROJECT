@@ -67,8 +67,8 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of allRestaurentData">
-        <td data-label="ID">{{data._id}}</td>
+      <tr *ngFor="let data of allRestaurentData; let i = index">
+        <td data-label="ID">{{getDisplayId(i)}}</td>
         <td data-label="Name">{{data.name}}</td>
         <td data-label="Email">{{data.email}}</td>
         <td data-label="Address">{{data.address}}</td>

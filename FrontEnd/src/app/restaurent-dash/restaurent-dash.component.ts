@@ -197,6 +197,10 @@ export class RestaurentDashComponent implements OnInit {
     });
   }
 
+  getDisplayId(index: number): number {
+    return index + 1;
+  }
+
   deleteResto(id: string) {
     if (!id) {
       console.error('No restaurant ID provided for deletion');
