@@ -46,13 +46,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Middleware to verify JWT token
 const verifyToken = (req, res, next) => {
     const bearerHeader = req.headers['authorization'];
-    
+
     if (!bearerHeader) {
         return res.status(401).json({ message: 'No token provided' });
     }
 
     const token = bearerHeader.split(' ')[1];
-    
+
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
         req.user = decoded;
@@ -73,7 +73,7 @@ mongoose.connect(MONGODB_URI, {
     console.log('Error connecting to MongoDB:', error);
 });
 
-// Authentication Routes with explicit OPTIONS handling
+// Authentication Routes
 app.options('/api/login', (req, res) => {
     res.header('Access-Control-Allow-Origin', req.headers.origin);
     res.header('Access-Control-Allow-Methods', 'POST,OPTIONS');
@@ -88,14 +88,14 @@ app.post('/api/login', async (req, res) => {
             email: req.body.email,
             password: req.body.password
         });
-        
+
         if (user) {
             const token = jwt.sign(
                 { userId: user._id, email: user.email },
                 JWT_SECRET,
                 { expiresIn: '24h' }
             );
-            
+
             res.json({ 
                 message: 'Login successful',
                 token: token
@@ -125,13 +125,13 @@ app.post('/api/signup', async (req, res) => {
 
         const user = new User(req.body);
         await user.save();
-        
+
         const token = jwt.sign(
             { userId: user._id, email: user.email },
             JWT_SECRET,
             { expiresIn: '24h' }
         );
-        
+
         res.status(201).json({ 
             message: 'User registered successfully',
             token: token
@@ -139,6 +139,20 @@ app.post('/api/signup', async (req, res) => {
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
+});
+
+// Logout Route
+app.options('/api/logout', (req, res) => {
+    res.header('Access-Control-Allow-Origin', req.headers.origin);
+    res.header('Access-Control-Allow-Methods', 'POST,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.sendStatus(200);
+});
+
+app.post('/api/logout', (req, res) => {
+    // Invalidate token logic (if any) can be implemented here
+    res.status(200).json({ message: 'Logout successful' });
 });
 
 // Protected Restaurant Routes
@@ -194,7 +208,7 @@ app.delete('/api/restaurants/:id', verifyToken, async (req, res) => {
 // Serve frontend in production
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, '../frontend/dist')));
-    
+
     app.get('*', (req, res) => {
         res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
     });
